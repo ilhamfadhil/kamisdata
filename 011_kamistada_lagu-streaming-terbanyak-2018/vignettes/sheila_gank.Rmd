@@ -18,6 +18,7 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, fig.align =
 
 ```{r package}
 library(tidyverse)
+library(corrplot)
 ```
 
 ```{r plot_theme}
@@ -32,9 +33,9 @@ plot_theme <- theme(legend.position = 'top',
 ```
 
 
-## Sheila on 7
+## Top Streamed Local Artist 2018
 
-Sheila on 7 
+Load data dari folder `data`. 
 
 ```{r load_data}
 load("../data/top_streamed_indonesia.rda")
@@ -53,6 +54,8 @@ sheila <- top_streamed_indonesia %>%
 head(sheila)
 ```
 
+## Sheila On 7
+
 ### Analisis Playcount
 
 Sheila On 7 merupakan band lokal yang paling banyak di stream pada tahun 2018 menurut Spotify. Lagu apa yang sering di stream? Ternyata lagu yang paling banyak di stream adalah lagu **Dan...**. Ternyata masih banyak pengguna spotify yang menyukai lagu lagu lawas. Selain Sheila On 7, Payung Teduh menjadi artist yang paling banyak di stream dengan lagunya yang dimainkan di setiap resepsi pernikahan.
@@ -65,6 +68,7 @@ top_streamed_indonesia %>%
   top_n(10)
 ```
 
+Dari lagu-lagu Sheila On 7, apa lagu 10 besar yang paling banyak di stream? Tentu saja **Dan...** nomor satu. Lebih jauh lagi, lagu dari album mana saja yang di stream? 
 
 ```{r}
 sheila %>%
@@ -80,6 +84,8 @@ sheila %>%
        y = "Playcount per lagu")
 ```
 
+Jika diurutkan menurut jumlah `playcount`, pada 10 lagu terbanyak di stream, album Sheila On 7 yang pertama (1999) sangat populer dengan lagu **Dan...** dan **Anugerah Terindah Yang Pernah Kumiliki**. Sedangkan, album OST 30 Hari mencari Cinta (2003) menjadi penyumbang lagu terbanyak dengan 3 lagu. Jadi, lagu-lagu Sheila On 7 yang laku itu justru pada masa awal-awal 
+
 ```{r}
 sheila %>%
   group_by(album) %>%
@@ -92,9 +98,18 @@ sheila %>%
        y = "Rata-rata Playcount per lagu")
 ```
 
+```{r, out.width="100%"}
+knitr::include_graphics("./pictures/sheila_formasi.png")
+```
+
+
 ```{r}
 top_streamed_indonesia %>%
-  ggplot(aes(x = tempo, y = playcount)) + 
-  geom_point() + plot_theme + scale_y_log10()
+  select_if(is.numeric) %>%
+  filter(is.na(playcount) != TRUE) %>%
+  cor() %>%
+  corrplot(method = "color", order = "hclust", type = "upper", 
+           addCoef.col = "black", tl.col = "black", 
+           tl.srt = 45, diag = FALSE, tl.cex = 0.8, number.cex = 0.6)
 ```
 
